@@ -1,17 +1,18 @@
 # Contributing / Project Rules
 
-Single source of truth for stack, structure, setup, environments, CI/CD, and architecture conventions. If it's not here or in an actual config file (.eslintrc.cjs, .prettierrc, tsconfig.json), it isn't a rule — raise it in a PR to add it here first.
+Single source of truth for stack, structure, setup, workflow, environments, CI/CD, and architecture conventions. If it's not here or in an actual config file (`eslint.config.js`, `.prettierrc`, `tsconfig.json`), it isn't a rule. Raise it in a PR to add it here first.
 
 ## Stack
 
 | Tool       | Version / Choice                      |
 | ---------- | ------------------------------------- |
-| Node.js    | 24.x (nvm install 24 && nvm use 24)   |
-| npm        | 11.x (npm install -g npm@11)          |
-| Framework  | React 18 + TypeScript (Vite)          |
+| Node.js    | 24.x (`nvm install 24 && nvm use 24`) |
+| npm        | 11.x (`npm install -g npm@11`)        |
+| Framework  | React 19 + TypeScript (Vite)          |
 | Routing    | react-router-dom                      |
 | HTTP       | axios                                 |
-| Styling    | Tailwind CSS + CSS custom properties  |
+| Styling    | Tailwind CSS v4 (`@tailwindcss/vite`) + CSS custom properties |
+| Linting    | ESLint 9 (flat config) + Prettier     |
 | Deployment | Vercel (lead-controlled environments) |
 | CI         | GitHub Actions                        |
 
@@ -39,66 +40,111 @@ src/
 └── index.css # imports theme.css, Tailwind directives
 ```
 
-## One-Time Setup
+## Setup (every developer, once)
 
 ```bash
-# 1. Toolchain
-
 nvm install 24 && nvm use 24
 npm install -g npm@11
 
-# 2. Scaffold (React + TypeScript via Vite)
-
-npm create vite@latest web-app -- --template react-ts
-cd web-app
+git clone <repo-url>
+cd digital-village-platform-web
+cp .env.example .env      # Windows PowerShell: copy .env.example .env
+# fill in real values (ask the lead)
 npm install
-
-# 3. Core dependencies
-
-npm install axios react-router-dom
-
-# 4. Styling
-
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-
-# 5. Linting / formatting (eslint-plugin-boundaries enforces the layering rules below)
-
-npm install -D eslint prettier eslint-config-prettier \
-eslint-plugin-react eslint-plugin-react-hooks \
-eslint-plugin-import eslint-plugin-boundaries \
-@typescript-eslint/parser @typescript-eslint/eslint-plugin
-
-# 6. Folder structure
-
-mkdir -p src/api/repositories src/api/services
-mkdir -p src/components/layout src/components/skeleton src/components/ui
-mkdir -p src/data src/hooks src/lib src/pages src/styles src/types
-
-# 7. Seed files
-
-touch src/api/apiClient.ts src/api/apiUrl.ts
-touch src/lib/utils.ts src/lib/theme.ts
-touch src/styles/theme.css
-touch src/types/index.ts
-touch .env.example .env .env.test vercel.json
-echo -e ".env\n.env.test" >> .gitignore
-
-# 8. CI scaffolding
-
-mkdir -p .github/workflows
-touch .github/workflows/ci.yml
+npm run dev
 ```
+
+`.npmrc` (committed) contains `legacy-peer-deps=true` so that `npm install` and CI's `npm ci` resolve peer dependencies the same way. Do not remove it.
+
+### npm scripts
+
+| Command                | What it does                                  |
+| ---------------------- | --------------------------------------------- |
+| `npm run dev`          | Start the local dev server                    |
+| `npm run lint`         | ESLint, including the architecture rules      |
+| `npm run typecheck`    | `tsc --noEmit`                                |
+| `npm run build`        | Type-check and production build               |
+| `npm run format`       | Format the code with Prettier                 |
+| `npm run format:check` | Check formatting without changing files       |
+| `npm run preview`      | Serve the production build locally            |
+
+## Developer Workflow
+
+### Before `git push`
+
+1. **Branch from a fresh `develop`.** Never work directly on `main` or `develop`.
+   ```bash
+   git checkout develop && git pull
+   git checkout -b feat/short-description
+   ```
+   Prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`.
+2. **Code within the [Architecture Rules](#architecture-rules-enforced-by-eslint)**, [TypeScript](#typescript), and [Imports](#imports) sections below.
+3. **Run the same checks CI runs.** All three must pass:
+   ```bash
+   npm run lint
+   npm run typecheck
+   npm run build
+   ```
+4. **Review your diff.** Run `git status` and `git diff`. No `.env` files, secrets, debug code, or unrelated changes.
+5. **Commit** with a [conventional message](#commits--prs), e.g. `git commit -m "feat: add village directory page"`.
+6. **Push.**
+   ```bash
+   git push -u origin feat/short-description
+   ```
+
+Before-push checklist:
+
+- [ ] Branched from an up-to-date `develop`
+- [ ] `npm run lint`, `npm run typecheck`, `npm run build` all pass
+- [ ] No `.env` files or secrets in the diff
+- [ ] New env variable? Name added to `.env.example` and the lead informed
+- [ ] Conventional commit message
+
+### After `git push`
+
+1. **Open a PR into `develop`.** Add a short summary (what and why).
+2. **Watch CI** in the PR's **Checks** tab (`build-and-check`). If red, open the failed step, fix locally, re-run the before-push checks, and push again. CI reruns automatically. A red check blocks the merge.
+3. **Open the Vercel preview URL** the bot comments on the PR. Click through your change, and refresh on a deep link to confirm routing works. Paste the URL into the PR description.
+4. **Get at least 1 approval.** Address comments by pushing more commits to the same branch.
+5. **Merge into `develop`** once the check is green, the PR is approved, and the branch is up to date.
+6. **Development deploy.** Merging starts `deploy-development`, which pauses until the lead approves (**Actions → the run → Review deployments**). Ping the lead if it is waiting.
+7. **Verify** the change on the Development URL, then delete your branch.
+   ```bash
+   git checkout develop && git pull
+   git branch -d feat/short-description
+   ```
+8. **Production** is released by the lead only, by merging `develop` into `main`. It needs the lead's approval to deploy.
+
+After-push checklist:
+
+- [ ] PR opened against `develop`
+- [ ] CI green
+- [ ] Preview URL checked and added to the PR description
+- [ ] At least 1 approval, then merged
+- [ ] Lead approved the development deploy
+- [ ] Verified on the Development URL, branch deleted
+
+### When CI fails
+
+| Symptom                                  | Likely fix                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `boundaries/element-types`               | You imported across layers. Go through a service.                                       |
+| `import/order`                           | Reorder imports as described in [Imports](#imports).                                    |
+| `tsc` errors                             | Fix the types. Don't add `any` to silence them.                                         |
+| `npm ci` says lockfile out of sync       | Run `npm install` locally and commit the updated `package-lock.json`.                   |
+| `ERESOLVE` on install                    | Confirm `.npmrc` with `legacy-peer-deps=true` is committed.                             |
+| Build passes locally, fails in CI        | Missing env variable or uncommitted file. Compare `.env.example` with Vercel/GitHub settings; run `git status`. |
+| Preview shows 404 on refresh             | `vercel.json` must rewrite all routes to `/`.                                           |
 
 ## Environment Variables
 
-Vite loads env files by mode. Only .env.example is committed — .env and .env.test are git-ignored.
+Vite loads env files by mode. Only `.env.example` is committed. `.env` and `.env.test` are git-ignored.
 
 | File         | Committed? | Loaded when                           | Purpose                                                            |
 | ------------ | ---------- | ------------------------------------- | ------------------------------------------------------------------ |
 | .env.example | Yes        | Never loaded directly                 | Template listing every key, no real values                         |
 | .env         | No         | Always (dev/local + production build) | Real values for whichever environment you're running               |
-| .env.test    | No         | vite --mode test / CI test runs       | Values for automated tests (mocked API base URL, dummy keys, etc.) |
+| .env.test    | No         | `vite --mode test` / CI test runs     | Values for automated tests (mocked API base URL, dummy keys, etc.) |
 
 ```env
 # .env.example
@@ -107,7 +153,9 @@ VITE_API_BASE_URL=
 VITE_APP_ORG_HEADER=
 ```
 
-Real per-environment values live only in Vercel's project settings (marked Sensitive, never exposed to client bundles unless prefixed VITE_ and genuinely public) and, for CI, in GitHub Actions secrets consumed to write a throwaway .env.test before running the test job.
+Real per-environment values live only in Vercel's project settings (marked Sensitive) and, for CI, in GitHub Actions secrets. Anything prefixed `VITE_` is bundled into the browser, so it must be genuinely public. Never put a secret in a `VITE_` variable.
+
+If a test job is added, it writes `.env.test` from GitHub Actions secrets at the start of the job, so Vite picks it up via `vite --mode test`, and it runs before `build-and-check`.
 
 ## Vercel Environments
 
@@ -119,18 +167,24 @@ Real per-environment values live only in Vercel's project settings (marked Sensi
 
 The Development and Production Vercel environments are configured as protected GitHub Environments requiring the lead's approval before a deployment job runs.
 
-## GitHub Actions — CI Gate
+`vercel.json` (SPA rewrite so React Router deep links work):
 
-.github/workflows/ci.yml runs on every PR and must pass before merge:
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
+```
+
+## GitHub Actions: CI Gate
+
+`.github/workflows/ci.yml` runs on every PR and must pass before merge:
 
 ```yaml
 name: CI
 
 on:
-pull_request:
-  branches: [main, develop]
-push:
-  branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
 
 jobs:
   build-and-check:
@@ -140,62 +194,82 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
       - run: npm run build
 
   deploy-development:
     needs: build-and-check
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
-      name: development # requires lead approval — configure under # Settings > Environments > development > Required reviewers
+      name: development # requires lead approval (Settings > Environments > development > Required reviewers)
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Deploy step calls Vercel CLI / vercel-action here"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm i -g vercel@latest
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 ```
 
-Branch protection on main and develop must require: this workflow passing, at least one approving review, and up-to-date branches before merge.
+Use one deploy path only. Because deployments are lead-gated through GitHub Environments, disable Vercel's own Git auto-deploy for gated branches, otherwise the app deploys twice and bypasses the approval.
 
-If/when a test job is added, it should write .env.test from GitHub Actions secrets at the start of the job, so Vite picks it up via vite --mode test, then run it before build-and-check.
+### Lead's one-time setup
+
+- **GitHub → Settings → Environments:** create `development` and `production`, and add the lead as **Required reviewer** on both.
+- **GitHub → Settings → Secrets and variables → Actions:** add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+- **GitHub → Settings → Branches:** protect `main` and `develop`. Require the `build-and-check` status check, at least one approving review, and up-to-date branches before merge.
+- **Vercel → Project Settings → Environment Variables:** set `VITE_API_BASE_URL` and `VITE_APP_ORG_HEADER` separately for Development, Preview, and Production.
+- Keep the [Vercel Environments](#vercel-environments) table above in sync with the real Vercel settings.
 
 ## Architecture Rules (enforced by ESLint)
 
 - pages/components → services → repositories → apiClient
-- api/repositories/ — raw API calls only. One file per feature. No business logic, no toasts, no state, no imports from services/.
-- api/services/ — business logic + user feedback (toasts/errors). Calls repositories/, never apiClient directly. The only api/ layer pages/components may import from.
-- pages/ / components/ — may import services/, hooks/, lib/, components/ui/. May not import api/repositories/ directly.
-- components/ui/ — dumb, reusable primitives only (Button, Input, Card). No feature-specific logic, no API imports.
+- `api/repositories/`: raw API calls only. One file per feature. No business logic, no toasts, no state, no imports from `services/`.
+- `api/services/`: business logic + user feedback (toasts/errors). Calls `repositories/`, never `apiClient` directly. The only `api/` layer pages/components may import from.
+- `pages/` / `components/`: may import `services/`, `hooks/`, `lib/`, `components/ui/`. May not import `api/repositories/` directly.
+- `components/ui/`: dumb, reusable primitives only (Button, Input, Card). No feature-specific logic, no API imports.
+- Endpoints are defined in `api/apiUrl.ts`, keyed by feature.
 
-This is enforced by the boundaries/element-types rule in .eslintrc.cjs — a PR that violates it fails npm run lint and therefore fails CI, not just code review.
+This is enforced by the `boundaries/element-types` rule in `eslint.config.js`. A PR that violates it fails `npm run lint` and therefore fails CI, not just code review.
 
 ## TypeScript
 
-- strict: true in tsconfig.json, no per-file opt-outs.
-- any disallowed except at typed I/O boundaries, with a comment explaining why.
-- Every shared shape (API DTOs, domain models) gets an explicit type in src/types/.
+- `strict: true` in `tsconfig.json`, no per-file opt-outs.
+- `any` disallowed except at typed I/O boundaries, with a comment explaining why.
+- Every shared shape (API DTOs, domain models) gets an explicit type in `src/types/`.
 
 ## Imports
 
-Order (enforced by eslint-plugin-import's order rule): external packages → @/api/* → @/components/* → @/hooks/* → @/lib/* → relative imports.
+Order (enforced by eslint-plugin-import's `order` rule): external packages → `@/api/*` → `@/components/*` → `@/hooks/*` → `@/lib/*` → relative imports.
 
 ## Authentication & Routing
 
-- App.tsx defines all routes and wraps protected ones in <ProtectedRoute>, which checks auth state before rendering; unauthenticated users redirect to /login.
-- apiClient.ts centralizes the axios instance: attaches auth token + org header on every request, and on 401 clears the session and redirects to /login.
-- No page/component reads localStorage/tokens directly — always go through services/hooks.
+- `App.tsx` defines all routes and wraps protected ones in `<ProtectedRoute>`, which checks auth state before rendering. Unauthenticated users redirect to `/login`.
+- `apiClient.ts` centralizes the axios instance: attaches auth token + org header on every request, and on 401 clears the session and redirects to `/login`.
+- No page/component reads `localStorage`/tokens directly. Always go through services/hooks.
 
 ## Commits / PRs
 
-- Conventional commits (feat:, fix:, chore:, ...).
-- PR must pass CI (lint + tsc --noEmit + build) before requesting review.
+- Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
+- PR must pass CI (lint + typecheck + build) before requesting review.
 - PR description includes the preview URL once Vercel posts it.
+- One feature or fix per PR. Keep PRs small.
+- Explain any new dependency in the PR description.
+- Never push directly to `main` or `develop`. Never merge with a red check or bypass branch protection. Never commit secrets or `.env` files.
 
 ## Required Evidence per Milestone
 
 For the "web shell + pipeline" milestone, attach in the PR description:
 
-- Preview URL from the Vercel bot comment on the PR.
-- Link to the passing GitHub Actions run.
-- The environment matrix table above, confirmed against actual Vercel project settings.
+- [ ] Preview URL from the Vercel bot comment.
+- [ ] Link to the passing GitHub Actions run, including the approved development deploy.
+- [ ] The environment matrix table above, confirmed against actual Vercel project settings.
