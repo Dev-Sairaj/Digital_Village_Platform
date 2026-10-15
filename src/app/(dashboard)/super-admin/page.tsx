@@ -3,7 +3,7 @@ import { SuperAdminDashboard } from "@/components/features/dashboard/SuperAdminD
 import { requireRole } from "@/lib/session";
 
 export const metadata: Metadata = {
-  title: "Super Admin Dashboard | Digital Village Platform",
+  title: "Super Admin Dashboard | GramSetu",
 };
 
 export default async function SuperAdminPage() {

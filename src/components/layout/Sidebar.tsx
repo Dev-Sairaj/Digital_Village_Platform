@@ -11,10 +11,10 @@ export function Sidebar({ items }: { items: NavItem[] }) {
     <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white md:flex">
       <div className="border-b border-slate-200 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
-          Smart Digital Village
+          GramSetu
         </p>
         <p className="text-sm font-semibold text-slate-900">
-          Digital Village Platform
+          Digital Village Management
         </p>
       </div>
       <nav aria-label="Main" className="flex-1 space-y-1 p-3">

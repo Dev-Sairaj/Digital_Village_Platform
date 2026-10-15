@@ -3,7 +3,7 @@ import { OperatorDashboard } from "@/components/features/dashboard/OperatorDashb
 import { requireRole } from "@/lib/session";
 
 export const metadata: Metadata = {
-  title: "Operator Dashboard | Digital Village Platform",
+  title: "Operator Dashboard | GramSetu",
 };
 
 interface OperatorPageProps {

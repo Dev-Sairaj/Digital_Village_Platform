@@ -6,7 +6,7 @@ import { getSession } from "@/lib/session";
 import { DEMO_ACCOUNT_HINTS } from "@/data/demoUsers";
 
 export const metadata: Metadata = {
-  title: "Sign in | Digital Village Platform",
+  title: "Sign in | GramSetu",
 };
 
 interface LoginPageProps {
@@ -26,7 +26,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <header className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
-            Smart Digital Village
+            GramSetu
           </p>
           <h1 className="text-2xl font-bold text-slate-900">Sign in</h1>
           <p className="text-sm text-slate-600">
