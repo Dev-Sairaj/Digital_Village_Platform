@@ -10,6 +10,7 @@ export const DEMO_USERS: readonly DemoUserRecord[] = [
     loginId: "superadmin",
     password: "Admin@123",
     name: "Asha Deshmukh",
+
     role: "SUPER_ADMIN",
     scope: { id: "node-state-mh", name: "Maharashtra", level: "STATE" },
   },
