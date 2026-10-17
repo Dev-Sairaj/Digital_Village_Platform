@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ROLE_HOME, canAccessPath } from "@/lib/permissions";
+import { canAccessPath, homeFor } from "@/lib/permissions";
 import { SESSION_COOKIE, verifyToken } from "@/lib/token";
 
 export async function proxy(request: NextRequest) {
@@ -23,12 +23,12 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isLoginPage) {
-    return NextResponse.redirect(new URL(ROLE_HOME[session.role], request.url));
+    return NextResponse.redirect(new URL(homeFor(session), request.url));
   }
 
   if (!canAccessPath(session.role, pathname)) {
     return NextResponse.redirect(
-      new URL(`${ROLE_HOME[session.role]}?denied=1`, request.url),
+      new URL(`${homeFor(session)}?denied=1`, request.url),
     );
   }
 

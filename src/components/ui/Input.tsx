@@ -22,7 +22,7 @@ export function Input({
     <div className="space-y-1.5">
       <label
         htmlFor={inputId}
-        className="block text-sm font-medium text-slate-800"
+        className="block text-sm font-medium text-text-strong"
       >
         {label}
       </label>
@@ -32,10 +32,10 @@ export function Input({
           id={inputId}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-2 ${
+          className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text outline-none transition placeholder:text-text-placeholder focus:ring-2 ${
             error
-              ? "border-red-500 focus:ring-red-200"
-              : "border-slate-300 focus:border-emerald-600 focus:ring-emerald-100"
+              ? "border-danger-control focus:ring-danger-border"
+              : "border-border-strong focus:border-primary-focus focus:ring-primary-soft"
           } ${trailing ? "pr-16" : ""} ${className}`}
         />
         {trailing && (
@@ -45,7 +45,7 @@ export function Input({
         )}
       </div>
       {error && (
-        <p id={errorId} className="text-sm text-red-600">
+        <p id={errorId} className="text-sm text-danger-strong">
           {error}
         </p>
       )}

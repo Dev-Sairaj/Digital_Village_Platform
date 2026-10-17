@@ -68,7 +68,7 @@ export function LoginForm({ next, reason, demoAccounts }: LoginFormProps) {
       {notice && !formError && (
         <p
           role="status"
-          className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
+          className="rounded-lg border border-success-border bg-success-subtle px-3 py-2 text-sm text-success-strong"
         >
           {notice}
         </p>
@@ -76,7 +76,7 @@ export function LoginForm({ next, reason, demoAccounts }: LoginFormProps) {
       {formError && (
         <p
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          className="rounded-lg border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger"
         >
           {formError}
         </p>
@@ -107,7 +107,7 @@ export function LoginForm({ next, reason, demoAccounts }: LoginFormProps) {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="rounded px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-muted"
               aria-pressed={showPassword}
             >
               {showPassword ? "Hide" : "Show"}
@@ -122,9 +122,9 @@ export function LoginForm({ next, reason, demoAccounts }: LoginFormProps) {
       {demoAccounts.length > 0 && (
         <section
           aria-label="Demo accounts"
-          className="rounded-lg border border-dashed border-slate-300 p-3"
+          className="rounded-lg border border-dashed border-border-strong p-3"
         >
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-subtle">
             Demo accounts (click to fill)
           </h2>
           <ul className="space-y-1">
@@ -138,17 +138,17 @@ export function LoginForm({ next, reason, demoAccounts }: LoginFormProps) {
                     setFieldErrors({});
                     setFormError(null);
                   }}
-                  className="flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm hover:bg-slate-100"
+                  className="flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm hover:bg-surface-muted"
                 >
                   <span>
-                    <span className="font-medium text-slate-800">
+                    <span className="font-medium text-text-strong">
                       {account.loginId}
                     </span>
-                    <span className="ml-2 text-slate-500">
+                    <span className="ml-2 text-text-subtle">
                       {account.scopeLabel}
                     </span>
                   </span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                  <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-text-muted">
                     {ROLE_LABEL[account.role]}
                   </span>
                 </button>

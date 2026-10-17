@@ -11,13 +11,26 @@ import { TransactionsPanel } from "./TransactionsPanel";
 interface VillageDashboardProps {
   villageName: string;
   overview: VillageOverview;
+  denied?: boolean;
 }
 
-export function VillageDashboard({ villageName, overview }: VillageDashboardProps) {
+export function VillageDashboard({
+  villageName,
+  overview,
+  denied = false,
+}: VillageDashboardProps) {
   const taluka = overview.trail[overview.trail.length - 1] ?? "your area";
 
   return (
     <>
+      {denied && (
+        <p
+          role="alert"
+          className="mx-auto mt-4 max-w-[1560px] rounded-lg border border-warning-border bg-warning-bg px-4 py-3 text-sm text-warning-strong"
+        >
+          You do not have permission for this action.
+        </p>
+      )}
       <Hero
         title={villageName}
         trail={overview.trail}

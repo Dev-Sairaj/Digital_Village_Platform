@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ROLE_HOME } from "@/lib/permissions";
+import { homeFor } from "@/lib/permissions";
 import {
   SESSION_COOKIE,
   SESSION_MAX_AGE_SECONDS,
@@ -44,6 +44,6 @@ export async function requireRole(
 ): Promise<SessionUser> {
   const session = await requireSession();
   if (!allowed.includes(session.role))
-    redirect(`${ROLE_HOME[session.role]}?denied=1`);
+    redirect(`${homeFor(session)}?denied=1`);
   return session;
 }
