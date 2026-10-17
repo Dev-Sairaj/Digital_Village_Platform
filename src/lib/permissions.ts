@@ -36,6 +36,13 @@ const NAV_ITEMS: Record<Role, readonly NavItem[]> = {
   OPERATOR: [{ href: "/operator", label: "Overview", enabled: true }],
 };
 
+// Routes a role may open that are not part of the legacy sidebar above
+// (the workspace shell has its own navigation, see lib/workspaceNav.ts).
+const EXTRA_PATHS: Record<Role, readonly string[]> = {
+  SUPER_ADMIN: [],
+  OPERATOR: ["/village"],
+};
+
 const PERMISSIONS: Record<Role, readonly PermissionItem[]> = {
   SUPER_ADMIN: [
     { label: "Manage hierarchy, users and role assignments", scope: "All levels" },
@@ -55,11 +62,15 @@ export function permissionsFor(role: Role): readonly PermissionItem[] {
   return PERMISSIONS[role];
 }
 
+function matches(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function canAccessPath(role: Role, pathname: string): boolean {
   if (pathname === "/") return true;
 
-  return NAV_ITEMS[role].some(
-    ({ href, enabled }) =>
-      enabled && (pathname === href || pathname.startsWith(`${href}/`)),
+  return (
+    NAV_ITEMS[role].some(({ href, enabled }) => enabled && matches(pathname, href)) ||
+    EXTRA_PATHS[role].some((href) => matches(pathname, href))
   );
 }
