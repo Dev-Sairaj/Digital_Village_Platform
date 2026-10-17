@@ -1,6 +1,6 @@
-# SMIV Web Shell
+# GramSetu
 
-Foundational web application for the [SMIV / SmartVillage] platform — a React +
+Foundational web application for the GramSetu digital village platform — a React +
 TypeScript client with routing, authenticated API access, and a lead-controlled
 deployment pipeline (GitHub Actions → Vercel).
 
