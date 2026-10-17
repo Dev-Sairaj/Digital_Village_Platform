@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ROLE_HOME } from "@/lib/permissions";
+import { homeFor } from "@/lib/permissions";
 import { createSession } from "@/lib/session";
 import { DEMO_USERS, toSessionUser } from "@/data/demoUsers";
 import type { LoginResult } from "@/types/auth";
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
   const result: LoginResult = {
     user: sessionUser,
-    redirectTo: ROLE_HOME[sessionUser.role],
+    redirectTo: homeFor(sessionUser),
   };
   return NextResponse.json(result);
 }

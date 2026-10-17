@@ -1,4 +1,4 @@
-import type { HierarchyLevel, Role } from "@/types/auth";
+import type { HierarchyLevel, Role, SessionUser } from "@/types/auth";
 
 export interface NavItem {
   href: string;
@@ -15,6 +15,13 @@ export const ROLE_HOME: Record<Role, string> = {
   SUPER_ADMIN: "/super-admin",
   OPERATOR: "/operator",
 };
+
+export function homeFor(user: SessionUser): string {
+  if (user.role === "OPERATOR" && user.scope.level === "VILLAGE") {
+    return "/village";
+  }
+  return ROLE_HOME[user.role];
+}
 
 export const ROLE_LABEL: Record<Role, string> = {
   SUPER_ADMIN: "Super Admin",

@@ -15,16 +15,16 @@ export function OperatorDashboard({ user, denied }: OperatorDashboardProps) {
       {denied && (
         <p
           role="alert"
-          className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          className="rounded-lg border border-warning-border bg-warning-bg px-4 py-3 text-sm text-warning-strong"
         >
           You do not have permission for this action.
         </p>
       )}
       <header>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-text">
           Operator Dashboard
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-text-muted">
           Welcome, {user.name}. You manage day-to-day operations within your
           assigned area.
         </p>

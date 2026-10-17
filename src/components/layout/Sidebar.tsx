@@ -8,12 +8,12 @@ export function Sidebar({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white md:flex">
-      <div className="border-b border-slate-200 px-5 py-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
+      <div className="border-b border-border px-5 py-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
           GramSetu
         </p>
-        <p className="text-sm font-semibold text-slate-900">
+        <p className="text-sm font-semibold text-text">
           Digital Village Management
         </p>
       </div>
@@ -26,10 +26,10 @@ export function Sidebar({ items }: { items: NavItem[] }) {
               <span
                 key={item.href}
                 aria-disabled="true"
-                className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-400"
+                className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-text-placeholder"
               >
                 {item.label}
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase">
+                <span className="rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-medium uppercase">
                   Soon
                 </span>
               </span>
@@ -42,8 +42,8 @@ export function Sidebar({ items }: { items: NavItem[] }) {
               aria-current={active ? "page" : undefined}
               className={`block rounded-lg px-3 py-2 text-sm font-medium transition ${
                 active
-                  ? "bg-emerald-50 text-emerald-800"
-                  : "text-slate-700 hover:bg-slate-100"
+                  ? "bg-primary-subtle text-primary-strong"
+                  : "text-text-secondary hover:bg-surface-muted"
               }`}
             >
               {item.label}

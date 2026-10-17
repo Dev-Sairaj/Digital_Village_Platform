@@ -28,13 +28,13 @@ export function ProfileMenu({ user }: { user: SessionUser }) {
   return (
     <div className="flex items-center gap-4">
       <div className="text-right">
-        <p className="text-sm font-semibold text-slate-900">{user.name}</p>
-        <p className="text-xs text-slate-500">
+        <p className="text-sm font-semibold text-text">{user.name}</p>
+        <p className="text-xs text-text-subtle">
           {ROLE_LABEL[user.role]} · {LEVEL_LABEL[user.scope.level]}:{" "}
           {user.scope.name}
         </p>
         {error && (
-          <p role="alert" className="text-xs text-red-600">
+          <p role="alert" className="text-xs text-danger-strong">
             {error}
           </p>
         )}
