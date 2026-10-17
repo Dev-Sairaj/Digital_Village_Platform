@@ -3,4 +3,7 @@ export const apiUrl = {
     login: "/api/auth/login",
     logout: "/api/auth/logout",
   },
+  village: {
+    overview: (villageId: string) => `/villages/${villageId}/overview`,
+  },
 } as const;

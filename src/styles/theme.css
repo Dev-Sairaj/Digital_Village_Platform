@@ -1,3 +1,158 @@
-/* CSS custom properties (design tokens) */
+/* GramSetu design tokens. Variable names mirror gramsetu.css so the reference can be diffed against this port. */
 :root {
+  --n9: #091630;
+  --n8: #0e2349;
+  --n6: #274e91;
+  --n5: #4f73b3;
+  --n4: #829ecc;
+  --n3: #b7c8e2;
+  --n1: #e8eef8;
+
+  --o: #ff671f;
+  --o2: #cc4c0b;
+  --o0: #fff1ea;
+
+  --g: #046a38;
+  --g4: #3cad70;
+  --g0: #e6f4ed;
+
+  --s0: #f8fafc;
+  --s1: #f1f5f9;
+  --s2: #e2e8f0;
+  --s3: #cbd5e1;
+  --s4: #94a3b8;
+  --s5: #475569;
+  --s6: #1e293b;
+
+  --danger: #b91c1c;
+  --danger-bg: #fef2f2;
+  --warn: #b45309;
+  --warn-bg: #fffbeb;
+  --info: #274e91;
+  --info-bg: #eff6ff;
+
+  --white: #ffffff;
+
+  --sh-card: 0 1px 2px #0e23490d;
+  --sh-kpi: 0 8px 24px #0e234920;
+  --sh-kpi-hover: 0 12px 30px #0e234933;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --sans: var(--font-mukta), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
+@theme inline {
+  --color-n9: var(--n9);
+  --color-n8: var(--n8);
+  --color-n6: var(--n6);
+  --color-n5: var(--n5);
+  --color-n4: var(--n4);
+  --color-n3: var(--n3);
+  --color-n1: var(--n1);
+  --color-o: var(--o);
+  --color-o2: var(--o2);
+  --color-o0: var(--o0);
+  --color-g: var(--g);
+  --color-g4: var(--g4);
+  --color-g0: var(--g0);
+  --color-s0: var(--s0);
+  --color-s1: var(--s1);
+  --color-s2: var(--s2);
+  --color-s3: var(--s3);
+  --color-s4: var(--s4);
+  --color-s5: var(--s5);
+  --color-s6: var(--s6);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --font-sans: var(--sans);
+  --font-serif: var(--serif);
+
+  --shadow-card: var(--sh-card);
+  --shadow-kpi: var(--sh-kpi);
+  --shadow-kpi-hover: var(--sh-kpi-hover);
+
+  --radius-card: 12px;
+  --radius-control: 9px;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--o);
+    outline-offset: 2px;
+  }
+}
+
+/* Hero brand details: faint 24-spoke wheel (top right) and saffron / white / green strip (bottom edge). */
+.hero-wheel {
+  border-radius: 9999px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--white) 16%, transparent) 0deg 1.4deg,
+    transparent 1.4deg 15deg
+  );
+  -webkit-mask-image: radial-gradient(circle, black 0 36%, transparent 70%);
+  mask-image: radial-gradient(circle, black 0 36%, transparent 70%);
+}
+
+.hero-strip {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--o) 0 33.333%,
+    var(--white) 33.333% 66.666%,
+    var(--g) 66.666% 100%
+  );
+}
+
+/* Loading skeleton: slate shimmer, no spinners. */
+.skeleton {
+  background: linear-gradient(90deg, var(--s1) 25%, var(--s2) 50%, var(--s1) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Live sync dot pulses every 2.4s. */
+.sync-ring {
+  animation: sync-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes sync-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton {
+    animation: none;
+  }
+  .sync-ring {
+    display: none;
+  }
 }
